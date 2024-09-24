@@ -1,4 +1,3 @@
-import Image from "next/image";
 import localFont from "next/font/local";
 import { useState } from "react";
 import axios from "axios";

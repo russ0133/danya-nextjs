@@ -1,4 +1,4 @@
-import type { NextApiRequest, NextApiResponse } from "next";
+import type { NextApiRequest } from "next";
 import axios from "axios";
 import https from "https";
 
@@ -16,7 +16,7 @@ SimalandAPI.interceptors.request.use((config) => {
   return config;
 });
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
+export default async function handler(req: NextApiRequest, res: any) {
   const { itemId } = req.query;
 
   if (!itemId || typeof itemId !== "string") {
