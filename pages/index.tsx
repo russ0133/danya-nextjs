@@ -1,5 +1,5 @@
 import localFont from "next/font/local";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 
 const geistSans = localFont({
@@ -17,6 +17,20 @@ export default function Home() {
   const [selectedId, setSelectedId] = useState("");
   const [productData, setProductData] = useState(null);
   const [error, setError] = useState("");
+
+  const [products, setProducts] = useState([]);
+  const [currentPage] = useState(1);
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get(`/api/simaland-per-page?itemId=${currentPage}`);
+        setProducts(response.data.items);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchProducts();
+  }, [currentPage]);
 
   const handleIdSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -55,6 +69,49 @@ export default function Home() {
 
         {error && <p className="text-red-500">{error}</p>}
 
+        {products &&
+          products.map((product) => (
+            <div className="mt-4 w-full max-w-2xl" key={product.id}>
+              <h2 className="text-2xl font-bold mb-4">{product.name}</h2>
+              <img
+                src={product.photoUrl}
+                alt={product.image_alt}
+                className="mb-4 rounded-lg shadow-md"
+              />
+              <div className="grid grid-cols-2 gap-4">
+                <p>
+                  <strong>Price:</strong> {product.price} {product.currencySign}
+                </p>
+                <p>
+                  <strong>SKU:</strong> {product.sid}
+                </p>
+                <p>
+                  <strong>Country:</strong> {product.country.name}
+                </p>
+                <p>
+                  <strong>Size:</strong> {product.size}
+                </p>
+                <p>
+                  <strong>Material:</strong> {product.stuff}
+                </p>
+                <p>
+                  <strong>Minimum Order:</strong> {product.minimum_order_quantity}
+                </p>
+                <p>
+                  <strong>In Box:</strong> {product.in_box} {product.inBoxPluralNameFormat}
+                </p>
+                <p>
+                  <strong>Weight:</strong> {product.weight} g
+                </p>
+                <p>
+                  <strong>Updated At:</strong> {new Date(product.updated_at).toLocaleString()}
+                </p>
+                <p>
+                  <strong>Free Delivery:</strong> {product.is_free_delivery ? "Yes" : "No"}
+                </p>
+              </div>
+            </div>
+          ))}
         {productData && (
           <div className="mt-4 w-full max-w-2xl">
             <h2 className="text-2xl font-bold mb-4">{productData.name}</h2>
